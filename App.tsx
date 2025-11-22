@@ -26,7 +26,10 @@ const App: React.FC = () => {
   const [tradeToEdit, setTradeToEdit] = useState<Trade | undefined>(undefined);
 
   const { tickers, isLoading, error, lastUpdated } = useBinanceTicker();
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const apiKey = process.env.API_KEY;
+  const ai = useMemo(() => {
+    return apiKey ? new GoogleGenAI({ apiKey }) : null;
+  }, [apiKey]);
 
   const sortedTrades = useMemo(() => {
     return [...trades].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
