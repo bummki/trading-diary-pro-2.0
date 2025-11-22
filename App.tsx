@@ -11,7 +11,7 @@ import ChatPage from './components/ChatPage';
 import AddTradeModal from './components/AddTradeModal';
 import Footer from './components/Footer';
 import { PlusIcon } from './components/icons/PlusIcon';
-import { GoogleGenAI } from '@google/genai';
+
 import { useBinanceTicker } from './hooks/useBinanceTicker';
 
 type View = 'dashboard' | 'trades' | 'analysis' | 'journal' | 'chat';
@@ -19,17 +19,14 @@ type View = 'dashboard' | 'trades' | 'analysis' | 'journal' | 'chat';
 const App: React.FC = () => {
   const [trades, setTrades] = useLocalStorage<Trade[]>('trades_v2', []);
   const [journals, setJournals] = useLocalStorage<Journal[]>('journals', []);
-  
+
   const [activeView, setActiveView] = useState<View>('journal');
-  
+
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [tradeToEdit, setTradeToEdit] = useState<Trade | undefined>(undefined);
 
   const { tickers, isLoading, error, lastUpdated } = useBinanceTicker();
-  const apiKey = process.env.API_KEY;
-  const ai = useMemo(() => {
-    return apiKey ? new GoogleGenAI({ apiKey }) : null;
-  }, [apiKey]);
+
 
   const sortedTrades = useMemo(() => {
     return [...trades].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -65,13 +62,13 @@ const App: React.FC = () => {
   };
 
   const renderContent = () => {
-    switch(activeView) {
+    switch (activeView) {
       case 'dashboard':
         return <Dashboard trades={sortedTrades} tickers={tickers} isLoading={isLoading} error={error} lastUpdated={lastUpdated} />;
       case 'trades':
         return <TradeLog trades={sortedTrades} onEdit={handleEditTrade} onDelete={handleDeleteTrade} onAddTrade={handleAddTradeClick} />;
       case 'journal':
-        return <JournalPage journals={journals} setJournals={setJournals} ai={ai} />;
+        return <JournalPage journals={journals} setJournals={setJournals} />;
       case 'analysis':
         return <AnalysisPage />;
       case 'chat':
@@ -88,13 +85,13 @@ const App: React.FC = () => {
         {renderContent()}
       </main>
       <Footer />
-      { (activeView === 'trades' || activeView === 'dashboard') &&
+      {(activeView === 'trades' || activeView === 'dashboard') &&
         <button
-            onClick={handleAddTradeClick}
-            className="fixed bottom-24 right-6 bg-highlight hover:bg-teal-500 text-white rounded-full p-4 shadow-lg transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-opacity-50"
-            aria-label="새 거래 추가"
+          onClick={handleAddTradeClick}
+          className="fixed bottom-24 right-6 bg-highlight hover:bg-teal-500 text-white rounded-full p-4 shadow-lg transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-highlight focus:ring-opacity-50"
+          aria-label="새 거래 추가"
         >
-            <PlusIcon />
+          <PlusIcon />
         </button>
       }
       {isTradeModalOpen && (
