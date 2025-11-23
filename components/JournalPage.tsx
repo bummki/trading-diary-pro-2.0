@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Journal } from '../types';
 import { XMarkIcon } from './icons/XMarkIcon';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
+import ArticleView from './ArticleView';
 
 interface JournalPageProps {
     journals: Journal[];
@@ -70,20 +71,33 @@ const JournalPage: React.FC<JournalPageProps> = ({ journals, setJournals }) => {
         }
     };
 
+    const [viewingJournal, setViewingJournal] = useState<Journal | null>(null);
+
     const handleJournalClick = (journal: Journal) => {
+        setViewingJournal(journal);
+    };
+
+    const handleEditClick = (e: React.MouseEvent, journal: Journal) => {
+        e.stopPropagation();
         setEditingJournalId(journal.id);
         setFormData({ ...journal });
         formRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
-    const handleCancelEdit = () => {
-        setEditingJournalId(null);
-        setFormData(getInitialFormState());
-        setKeywordInput('');
+    const handleCloseArticle = () => {
+        setViewingJournal(null);
     };
 
     return (
         <div className="space-y-6">
+            {viewingJournal && (
+                <ArticleView
+                    journal={viewingJournal}
+                    onClose={handleCloseArticle}
+                    allJournals={journals}
+                    onJournalClick={setViewingJournal}
+                />
+            )}
             <div ref={formRef} className="bg-secondary p-6 rounded-lg scroll-mt-20">
                 <div className="flex justify-between items-center">
                     <h2 className="text-2xl font-bold mb-4">{editingJournalId ? '일지 수정' : '새 일지 작성'}</h2>
@@ -158,17 +172,22 @@ const JournalPage: React.FC<JournalPageProps> = ({ journals, setJournals }) => {
                 ) : (
                     <div className="space-y-4">
                         {journals.map(journal => (
-                            <div key={journal.id} className="bg-primary p-4 rounded-md border border-accent transition-shadow hover:shadow-lg">
+                            <div key={journal.id} className="bg-primary p-4 rounded-md border border-accent transition-shadow hover:shadow-lg cursor-pointer" onClick={() => handleJournalClick(journal)}>
                                 <div className="flex justify-between items-start">
-                                    <div className="cursor-pointer flex-grow" onClick={() => handleJournalClick(journal)}>
+                                    <div className="flex-grow">
                                         <p className="text-xs text-text-secondary">{new Date(journal.date).toLocaleDateString()} - {journal.category}</p>
                                         <h3 className="text-lg font-semibold text-text-primary">{journal.title}</h3>
                                     </div>
-                                    <button onClick={() => handleDelete(journal.id)} className="text-danger hover:text-red-400 ml-4 flex-shrink-0">
-                                        <XMarkIcon />
-                                    </button>
+                                    <div className="flex gap-2">
+                                        <button onClick={(e) => handleEditClick(e, journal)} className="text-text-secondary hover:text-highlight flex-shrink-0 text-sm">
+                                            수정
+                                        </button>
+                                        <button onClick={(e) => { e.stopPropagation(); handleDelete(journal.id); }} className="text-danger hover:text-red-400 flex-shrink-0">
+                                            <XMarkIcon />
+                                        </button>
+                                    </div>
                                 </div>
-                                <p className="text-sm text-text-secondary mt-2 whitespace-pre-wrap cursor-pointer" onClick={() => handleJournalClick(journal)}>{journal.content.substring(0, 150)}{journal.content.length > 150 ? '...' : ''}</p>
+                                <p className="text-sm text-text-secondary mt-2 whitespace-pre-wrap">{journal.content.substring(0, 150)}{journal.content.length > 150 ? '...' : ''}</p>
                                 <div className="mt-3 flex flex-wrap gap-2 items-center">
                                     {journal.linkedSymbols?.map(symbol => (
                                         <span key={symbol} className="bg-accent text-xs text-highlight px-2 py-1 rounded-full">{symbol}</span>

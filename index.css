@@ -1,1 +1,83 @@
-/* This file is intentionally left empty to resolve the missing index.css build warning */
+/* AdSense & Article View Styles */
+
+.adsense-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    min-height: 100px;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.dark .adsense-container {
+    background-color: #1f2937;
+    border-color: #374151;
+}
+
+/* Related Posts Section */
+.related-posts-section {
+    margin-top: 1rem;
+}
+
+/* Button Wrapper (for ad targeting) */
+.button-wrapper {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* List Container (Card Style for Mobile) */
+.list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Mobile UX Improvements */
+@media (max-width: 640px) {
+    .list-container table {
+        display: none;
+        /* Hide tables on mobile if needed, or style them as cards */
+    }
+
+    /* Example of converting a list item to a card style */
+    .list-item-card {
+        background: white;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* Typography for Article Content */
+.prose h1,
+.prose h2,
+.prose h3 {
+    color: inherit;
+    font-weight: 700;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+.prose p {
+    margin-bottom: 1em;
+    line-height: 1.75;
+}
+
+.prose ul,
+.prose ol {
+    margin-bottom: 1em;
+    padding-left: 1.5em;
+}
+
+.prose a {
+    color: #3b82f6;
+    text-decoration: underline;
+}
+
+.prose a:hover {
+    color: #2563eb;
+}
